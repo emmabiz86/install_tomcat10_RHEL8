@@ -1,0 +1,79 @@
+#Install Java 11 on RHEL 10
+
+sudo yum install java-11-openjdk-devel
+
+#Verify Java version
+
+java -version
+
+#Install Apache Tomcat on RHEL 10 
+
+sudo yum install wget -y
+wget https://downloads.apache.org/tomcat/tomcat-10/v10.0.0-M8/bin/apache-tomcat-10.0.0-M8.tar.gz
+mv apache-tomcat-10.0.0-M8 tomcat10
+pwd tomcat10/
+ls -l tomcat10/
+
+#Create tomcat service
+
+mv apache-tomcat-10.0.0-M8 tomcat10
+
+#copy this configuration into the service
+
+[Service]
+Type=forking
+User=tomcat
+Group=tomcat
+
+Environment=CATALINA_PID=/usr/local/tomcat10/temp/tomcat.pid
+Environment=CATALINA_HOME=/usr/local/tomcat10
+Environment=CATALINA_BASE=/usr/local/tomcat10
+
+ExecStart=/usr/local/tomcat10/bin/catalina.sh start
+ExecStop=/usr/local/tomcat10/bin/catalina.sh stop
+
+RestartSec=10
+Restart=always
+
+#reload systemd
+
+systemctl daemon-reload
+systemctl start tomcat.service
+systemctl enable tomcat.service
+systemctl status tomcat.service
+
+#confirm daemon is up and tomcat is running on port 8080 and 8443
+
+netstat -tlpn
+
+#Acess web interface 
+http://localhost:8080
+OR
+http://SERVER_IP:8080
+
+#enable authentication for tomcat manager
+
+vi /usr/local/tomcat10/conf/tomcat-users.xml
+
+#copy and paste the following configuration within the <tomcat-users> and </tomcat-users> tags as shown in the screenshot. 
+
+<role rolename="admin-gui,manager-gui"/> 
+<user username="admin" password="tomhost@80" roles="admin-gui,manager-gui"/>
+
+#Enable Remote Access to Tomcat Manager and Host Manager
+#Then look for the following line.  allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> . 
+#change it to this to allow tomcat access from IP address 192.168.56.10.or network
+
+allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1 |192.168.56.10" />
+
+#or access from any host
+
+allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1 |.*" />
+
+#restart tomcat service
+
+systemctl restart tomcat.service
+#Acess Tomcat manager via
+http://localhost:8080/manager
+OR
+http://SERVER_IP:8080/manager
