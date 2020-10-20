@@ -10,17 +10,21 @@ java -version
 
 sudo yum install wget -y
 wget https://downloads.apache.org/tomcat/tomcat-10/v10.0.0-M8/bin/apache-tomcat-10.0.0-M8.tar.gz
+tar -xvf apache-tomcat-10.0.0-M8.tar.gz
 mv apache-tomcat-10.0.0-M8 tomcat10
 pwd tomcat10/
 ls -l tomcat10/
 
 #Create tomcat service
 
-mv apache-tomcat-10.0.0-M8 tomcat10
+vi /etc/systemd/system/tomcat.service
 
 #copy this configuration into the service
 
-vi /etc/systemd/system/tomcat.service
+
+[Unit]
+Description=Apache Tomcat Server
+After=syslog.target network.target
 
 [Service]
 Type=forking
@@ -36,6 +40,8 @@ ExecStop=/usr/local/tomcat10/bin/catalina.sh stop
 
 RestartSec=10
 Restart=always
+[Install]
+WantedBy=multi-user.target
 
 #reload systemd
 
