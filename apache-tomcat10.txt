@@ -20,6 +20,8 @@ mv apache-tomcat-10.0.0-M8 tomcat10
 
 #copy this configuration into the service
 
+vi /etc/systemd/system/tomcat.service
+
 [Service]
 Type=forking
 User=tomcat
