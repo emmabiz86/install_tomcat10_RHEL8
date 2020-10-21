@@ -8,10 +8,10 @@ java -version
 
 #Install Apache Tomcat on RHEL 10 
 
-cd /usr/local
 sudo yum install wget -y
 wget https://downloads.apache.org/tomcat/tomcat-10/v10.0.0-M8/bin/apache-tomcat-10.0.0-M8.tar.gz
 tar -xvf apache-tomcat-10.0.0-M8.tar.gz
+cd /opt/
 mv apache-tomcat-10.0.0-M8 tomcat10
 pwd tomcat10/
 ls -l tomcat10/
