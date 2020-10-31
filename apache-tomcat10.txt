@@ -1,4 +1,4 @@
-# Install Java 11 on RHEL 10
+# Install Java  on RHEL 10
 
       sudo yum install java-1.8.0-openjdk
 
