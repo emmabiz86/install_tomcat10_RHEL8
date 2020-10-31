@@ -1,27 +1,39 @@
-#Install Java 11 on RHEL 10
+# Install Java 11 on RHEL 10
 
-sudo yum install java-1.8.0-openjdk
+      sudo yum install java-1.8.0-openjdk
 
-#Verify Java version
+      java -version
+# navigate to the usr/local directory
 
-java -version
+      cd /usr/local
 
-#Install Apache Tomcat on RHEL 10 
+#Install wget if not already installed
+      
+     sudo yum install wget
 
-sudo yum install wget -y
-wget https://downloads.apache.org/tomcat/tomcat-10/v10.0.0-M8/bin/apache-tomcat-10.0.0-M8.tar.gz
-tar -xvf apache-tomcat-10.0.0-M8.tar.gz
-cd /opt/
-mv apache-tomcat-10.0.0-M8 tomcat10
-pwd tomcat10/
-ls -l tomcat10/
+# Downlad Apache Tomcat10, unzip and rename the file
+      
+     wget https://downloads.apache.org/tomcat/tomcat-10/v10.0.0-M8/bin/apache-tomcat-10.0.0-M8.tar.gz
+    
+     tar -xvf  apache-tomcat-10.0.0-M8.tar.gz
 
-#Create tomcat service
+     mv apache-tomcat-10.0.0-M8 tomcat10
 
-vi /etc/systemd/system/tomcat.service
+     ls -l tomcat10/
 
-#copy this configuration into the service
+# create a user & give it the permissions of the tomcat file and systemd service
+   
+      useradd -r tomcat
 
+      chown -R tomcat:tomcat /usr/local/tomcat10
+
+      ls -l /usr/local/tomcat10
+
+# Create tomcat service
+
+      vi /etc/systemd/system/tomcat.service
+     
+# copy this configuration into the service
 
 [Unit]
 Description=Apache Tomcat Server
@@ -44,45 +56,47 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 
-#reload systemd
+# reload systemd, start tomcat and check status of tomcat to be running.
 
-systemctl daemon-reload
-systemctl start tomcat.service
-systemctl enable tomcat.service
-systemctl status tomcat.service
+       systemctl daemon-reload
 
-#confirm daemon is up and tomcat is running on port 8080 and 8443
+       systemctl start tomcat.service
 
-netstat -tlpn
+       systemctl enable tomcat.service
 
-#Acess web interface 
-http://localhost:8080
-OR
-http://SERVER_IP:8080
+       systemctl status tomcat.service
 
-#enable authentication for tomcat manager
+# confirm daemon is up and tomcat is running on port 8080 and 8443
 
-vi /usr/local/tomcat10/conf/tomcat-users.xml
+       netstat -tlpn
 
-#copy and paste the following configuration within the <tomcat-users> and </tomcat-users> tags as shown in the screenshot. 
+# Acess web interface: http://localhost:8080 OR http://SERVER_IP:8080
+
+# enable authentication for tomcat manager
+  
+     vi /usr/local/tomcat10/conf/tomcat-users.xml
+
+# copy and paste the following configuration within the <tomcat-users> and </tomcat-users> tags as shown in the screenshot. 
 
 <role rolename="admin-gui,manager-gui"/> 
-<user username="admin" password="tomhost@80" roles="admin-gui,manager-gui"/>
+<user username="admin" password="admin" roles="admin-gui,manager-gui"/>
 
-#Enable Remote Access to Tomcat Manager and Host Manager
-#Then look for the following line.  allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> . 
-#change it to this to allow tomcat access from IP address 192.168.56.10.or network
+# Enable Remote Access to Tomcat Manager and Host Manager
+
+    vi /usr/local/tomcat10/webapps/manager/META-INF/context.xml
+
+# Then look for the following line.  allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> . 
+# change it to this to allow tomcat access from IP address 192.168.56.10.or network
 
 allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1 |192.168.56.10" />
 
-#or access from any host
+# or access from any host
 
-allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1 |.*" />
+allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1 |.*" /
 
-#restart tomcat service
+# restart tomcat service
 
-systemctl restart tomcat.service
-#Acess Tomcat manager via
-http://localhost:8080/manager
-OR
-http://SERVER_IP:8080/manager
+    systemctl restart tomcat.service
+
+# Acess Tomcat manager via:   http://localhost:8080/manager  OR    http://SERVER_IP:8080/manager
+# CHECK FIREWALL SETTINGS 
