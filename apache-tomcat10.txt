@@ -78,8 +78,13 @@ WantedBy=multi-user.target
 
 # copy and paste the following configuration within the <tomcat-users> and </tomcat-users> tags as shown in the screenshot. 
 
-<role rolename="admin-gui,manager-gui"/> 
-<user username="admin" password="admin" roles="admin-gui,manager-gui"/>
+<role rolename="manager-gui"/>
+ <role rolename="manager-script"/>
+ <role rolename="manager-jmx"/>
+ <role rolename="manager-status"/>
+ <user username="admin" password="admin" roles="manager-gui, manager-script, manager-jmx, manager-status"/>
+ <user username="deployer" password="deployer" roles="manager-script"/>
+ <user username="tomcat" password="s3cret" roles="manager-gui"/>
 
 # Enable Remote Access to Tomcat Manager and Host Manager
 
